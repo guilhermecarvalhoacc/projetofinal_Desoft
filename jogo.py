@@ -43,13 +43,27 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
 
-        self.speedy = 2
+        self.speedy = 0
         self.speedx = 0
+        self.pulando = 0
+
+    def pula(self):
+        self.pulando = 40
 
     def update(self):
 
+        if self.pulando == 0:
+            self.speedy = 0
+        elif self.pulando > 20:
+            self.speedy = -9
+            self.pulando -= 1
+        else:
+            self.speedy = 9
+            self.pulando -= 1
+
         self.rect.x += self.speedx
         self.rect.y += self.speedy
+        
 
         if self.rect.right > WIDTH:
             self.rect.right = WIDTH
@@ -59,6 +73,8 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = 640
         if self.rect.bottom < 53:
             self.rect.bottom = 53
+
+    
 
 
 pygame.init()
@@ -82,6 +98,7 @@ all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
 
+
 try:
     
 
@@ -91,7 +108,7 @@ try:
 
         clock.tick(FPS)
         
-        print(player.rect.bottom)
+        #print(player.rect.bottom)
         for event in pygame.event.get():
 
 
@@ -105,7 +122,13 @@ try:
                 if event.key == pygame.K_RIGHT:
                     player.speedx = 8
                 if event.key == pygame.K_UP:
-                    player.speedy = -6
+                    if player.pulando == 0:
+                        player.pula()
+                
+
+
+
+
             if event.type == pygame.KEYUP:
 
                 if event.key == pygame.K_LEFT:
@@ -113,10 +136,7 @@ try:
                 if event.key == pygame.K_RIGHT:
                     player.speedx = 0
                 if event.key == pygame.K_UP:
-                    for i in range(5):
-                        player.speedy = -6
-                    time.sleep(0.01)
-                    player.speedy = 2
+                    pass
 
         all_sprites.update()
 
