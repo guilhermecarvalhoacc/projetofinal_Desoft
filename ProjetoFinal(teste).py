@@ -3,6 +3,7 @@
 
 import pygame
 from os import path
+import time
 
 
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -45,7 +46,22 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH / 2
         self.rect.bottom = HEIGHT - 10
 
-        self.speedy = random.randrange(0,8)
+        self.speedy = 0
+        self.speedx = 0
+
+    def update(self):
+
+        self.rect.x += self.speedx
+        self.rect.y += self.speedy
+
+        if self.rect.right > WIDTH:
+            self.rect.right = WIDTH
+        if self.rect.left < 0:
+            self.rect.left = 0
+        #if self.rect.up > HEIGHT:
+        #    self.rect.up = HEIGHT
+        #if self.rect.down < 0:
+         #   self.rect.down = 0
 
 
 pygame.init()
@@ -80,10 +96,34 @@ try:
         
 
         for event in pygame.event.get():
-            
+
 
             if event.type == pygame.QUIT:
                 running = False
+
+            if event.type == pygame.KEYDOWN:
+
+                if event.key == pygame.K_LEFT:
+                    player.speedx = -8
+                if event.key == pygame.K_RIGHT:
+                    player.speedx = 8
+                if event.key == pygame.K_UP:
+                    player.speedy = -8
+            if event.type == pygame.KEYUP:
+
+                if event.key == pygame.K_LEFT:
+                    player.speedx = 0
+                if event.key == pygame.K_RIGHT:
+                    player.speedx = 0
+                if event.key == pygame.K_UP:
+                    time.sleep(0.1)
+                    player.speedy = 4
+
+        all_sprites.update()
+
+            
+
+           
     
 
         screen.fill(BLACK)
