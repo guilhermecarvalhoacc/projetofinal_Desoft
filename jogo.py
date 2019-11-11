@@ -1,6 +1,7 @@
 import pygame
 from os import path
 import time
+import random
 
 
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -17,6 +18,57 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
+
+class Mob1(pygame.sprite.Sprite):
+    
+    def __init__(self):
+        
+        # Construtor da classe pai (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+        
+        # Carregando a imagem de fundo.
+        mob_img = pygame.image.load(path.join(img_dir, "bloco.jpg")).convert()
+        
+        # Diminuindo o tamanho da imagem.
+        self.image = pygame.transform.scale(mob_img, (300, 38))
+        
+        # Deixando transparente.
+        self.image.set_colorkey(BLACK)
+        
+        # Detalhes sobre o posicionamento.
+        self.rect = self.image.get_rect()
+        
+        # Sorteia um lugar inicial em x
+        self.rect.x = 550
+        # Sorteia um lugar inicial em y
+        self.rect.y = 400
+class Mob2(pygame.sprite.Sprite):
+    
+    def __init__(self):
+        
+        # Construtor da classe pai (Sprite).
+        pygame.sprite.Sprite.__init__(self)
+        
+        # Carregando a imagem de fundo.
+        mob_img = pygame.image.load(path.join(img_dir, "bloco.jpg")).convert()
+        
+        # Diminuindo o tamanho da imagem.
+        self.image = pygame.transform.scale(mob_img, (300, 38))
+        
+        # Deixando transparente.
+        self.image.set_colorkey(BLACK)
+        
+        # Detalhes sobre o posicionamento.
+        self.rect = self.image.get_rect()
+        
+        # Sorteia um lugar inicial em x
+        self.rect.x = 100
+        # Sorteia um lugar inicial em y
+        self.rect.y = 550
+            
+
+
+
 
 
 class Player(pygame.sprite.Sprite):
@@ -73,9 +125,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = 640
         if self.rect.bottom < 53:
             self.rect.bottom = 53
-
-    
-
+ 
 
 pygame.init()
 pygame.mixer.init()
@@ -91,13 +141,22 @@ clock = pygame.time.Clock()
 background = pygame.image.load(path.join(img_dir, 'tela.png')).convert()
 background_rect = background.get_rect()
 
-
 player = Player()
 
+# Cria um grupo de todos os sprites e adiciona a nave.
 all_sprites = pygame.sprite.Group()
 all_sprites.add(player)
 
+# Cria um grupo só dos meteoros
+mobs = pygame.sprite.Group()
 
+# Cria 8 meteoros e adiciona no grupo meteoros
+m1 = Mob1()
+all_sprites.add(m1)
+mobs.add(m1)
+m2 = Mob2()
+all_sprites.add(m2)
+mobs.add(m2)
 
 try:
     
@@ -140,7 +199,7 @@ try:
 
         all_sprites.update()
 
-            
+      
 
            
     
