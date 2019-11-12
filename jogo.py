@@ -29,6 +29,8 @@ class Plataforma(pygame.sprite.Sprite):
 
         pygame.sprite.Sprite.__init__(self)
 
+        self.w = w
+
         plataforma_img = pygame.image.load(path.join(img_dir, "bloquinho_master.jpg")).convert()
         self.image = plataforma_img
 
@@ -76,22 +78,27 @@ class Player(pygame.sprite.Sprite):
         self.pulando = 0
 
     def pula(self):
-        self.pulando = 30
+        self.pulando = 45
 
     def update(self):
 
         #if self.pulando == 0:
         #    self.speedy = 9
-        if self.pulando > 15:
+        if self.pulando > 22:
             self.speedy = -9
             self.pulando -= 1
         elif contato:
-            if player.rect.bottom > plataforma.rect.y and player.rect.bottom < (plataforma.rect.y + 10) :
-                player.rect.bottom = plataforma.rect.y
+            if self.rect.bottom > plataforma.rect.y and self.rect.bottom < (plataforma.rect.y + 10) :
+                self.rect.bottom = plataforma.rect.y
+            elif self.rect.bottom > (plataforma.rect.y +10) and self.rect.centerx < plataforma.rect.x + plataforma.w and self.rect.centerx > plataforma.rect.x + (plataforma.w - 10):
+                self.rect.centerx = plataforma.rect.x + plataforma.w
+            elif self.rect.bottom > (plataforma.rect.y +10) and self.rect.centerx > (plataforma.rect.x - 40) and self.rect.centerx < plataforma.rect.x +10:
+                self.rect.centerx = plataforma.rect.x - 40
             #self.speedy = 0     
         else:
             self.speedy = 9
-            self.pulando -= 1
+            if self.pulando > 0:
+                self.pulando -= 1
 
         self.rect.x += self.speedx
         self.rect.y += self.speedy
@@ -122,11 +129,13 @@ class Bullet(pygame.sprite.Sprite):
 
         self.rect.center = center
 
-        self.speedx = -9
+        self.speedx = -13
 
 
     def update(self):
         self.rect.x += self.speedx
+       # if self.rect.center > WIDTH or self.rect.center < 0:
+        #    self.doc.kill
 
 class Bullet_laser(pygame.sprite.Sprite):
 
@@ -144,7 +153,7 @@ class Bullet_laser(pygame.sprite.Sprite):
 
         self.rect.center = center
 
-        self.speedx = -9
+        self.speedx = -13
 
 
     def update(self):
@@ -205,7 +214,7 @@ background_rect = background.get_rect()
 
 
 player = Player()
-plataforma = Plataforma(100,550,300,50)
+plataforma = Plataforma(250,400,450,50)
 
 all_sprites = pygame.sprite.Group()
 plataformas = pygame.sprite.Group()
@@ -222,7 +231,7 @@ try:
 
     running = True
     while running:
-        x = random.randint(1,500)
+        x = random.randint(1,300)
         if x == 3:
             y = random.randint(1,5)
             if y == 3:
