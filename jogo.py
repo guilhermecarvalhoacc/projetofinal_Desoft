@@ -2,11 +2,8 @@ import pygame
 from os import path
 import time
 import random
-<<<<<<< HEAD
 
 balas = 10
-=======
->>>>>>> 3d67c47a6c118a7c902e34f5b6944b53204a3cc7
 
 
 img_dir = path.join(path.dirname(__file__), 'img')
@@ -23,57 +20,6 @@ RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
-
-class Mob1(pygame.sprite.Sprite):
-    
-    def __init__(self):
-        
-        # Construtor da classe pai (Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        
-        # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "bloco.jpg")).convert()
-        
-        # Diminuindo o tamanho da imagem.
-        self.image = pygame.transform.scale(mob_img, (300, 38))
-        
-        # Deixando transparente.
-        self.image.set_colorkey(BLACK)
-        
-        # Detalhes sobre o posicionamento.
-        self.rect = self.image.get_rect()
-        
-        # Sorteia um lugar inicial em x
-        self.rect.x = 550
-        # Sorteia um lugar inicial em y
-        self.rect.y = 400
-class Mob2(pygame.sprite.Sprite):
-    
-    def __init__(self):
-        
-        # Construtor da classe pai (Sprite).
-        pygame.sprite.Sprite.__init__(self)
-        
-        # Carregando a imagem de fundo.
-        mob_img = pygame.image.load(path.join(img_dir, "bloco.jpg")).convert()
-        
-        # Diminuindo o tamanho da imagem.
-        self.image = pygame.transform.scale(mob_img, (300, 38))
-        
-        # Deixando transparente.
-        self.image.set_colorkey(BLACK)
-        
-        # Detalhes sobre o posicionamento.
-        self.rect = self.image.get_rect()
-        
-        # Sorteia um lugar inicial em x
-        self.rect.x = 100
-        # Sorteia um lugar inicial em y
-        self.rect.y = 550
-            
-
-
-
 
 
 
@@ -166,7 +112,6 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = 640
         if self.rect.bottom < 53:
             self.rect.bottom = 53
-<<<<<<< HEAD
 
 class Bullet(pygame.sprite.Sprite):
 
@@ -252,9 +197,6 @@ class Laser_gun(pygame.sprite.Sprite):
 
     
 
-=======
- 
->>>>>>> 3d67c47a6c118a7c902e34f5b6944b53204a3cc7
 
 pygame.init()
 pygame.mixer.init()
@@ -270,31 +212,19 @@ clock = pygame.time.Clock()
 background = pygame.image.load(path.join(img_dir, 'tela.png')).convert()
 background_rect = background.get_rect()
 
+
 player = Player()
 plataforma = Plataforma(250,400,450,50)
 
-# Cria um grupo de todos os sprites e adiciona a nave.
 all_sprites = pygame.sprite.Group()
 plataformas = pygame.sprite.Group()
 bullets = pygame.sprite.Group()
 guns = pygame.sprite.Group()
 
-<<<<<<< HEAD
 all_sprites.add(player)
 all_sprites.add(plataforma)
 plataformas.add(plataforma)
-=======
-# Cria um grupo só dos meteoros
-mobs = pygame.sprite.Group()
->>>>>>> 3d67c47a6c118a7c902e34f5b6944b53204a3cc7
 
-# Cria 8 meteoros e adiciona no grupo meteoros
-m1 = Mob1()
-all_sprites.add(m1)
-mobs.add(m1)
-m2 = Mob2()
-all_sprites.add(m2)
-mobs.add(m2)
 
 try:
     
@@ -351,7 +281,6 @@ try:
                     pass
 
 
-<<<<<<< HEAD
         contato = pygame.sprite.spritecollide(player, plataformas, False)
         pegou_arma = pygame.sprite.spritecollide(player,guns,False)
         for arma in pegou_arma:
@@ -368,9 +297,6 @@ try:
 
         
             
-=======
-      
->>>>>>> 3d67c47a6c118a7c902e34f5b6944b53204a3cc7
 
            
     
