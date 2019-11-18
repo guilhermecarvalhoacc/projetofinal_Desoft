@@ -12,7 +12,7 @@ img_dir = path.join(path.dirname(__file__), 'img')
 
 WIDTH = 900 
 HEIGHT = 650 
-FPS = 60
+FPS = 60 
 
 
 WHITE = (255, 255, 255)
@@ -229,10 +229,6 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.kill()
-        if player.lado == "esquerdo" or player2.lado == "esquerdo":
-            self.speedx = -13
-        elif player.lado == "direito" or player2.lado == "direito":
-            self.speedx = +13
             
 class Bullet_laser(pygame.sprite.Sprite):
 
@@ -257,10 +253,6 @@ class Bullet_laser(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.kill()
-        if player.lado == "esquerdo" or player2.lado == "esquerdo":
-            self.speedx = -13
-        elif player.lado == "direito" or player2.lado == "direito":
-            self.speedx = +13
 
 
 class Laser_gun(pygame.sprite.Sprite):
@@ -386,13 +378,25 @@ try:
                 if event.key == pygame.K_l:
                     if pegou_arma:
                         bullet_laser = Bullet_laser(player.rect.center)
+
+                        if player.lado == "esquerdo":
+                            bullet_laser.speedx = -13
+                        elif player.lado == "direito":
+                            bullet_laser.speedx = +13
+
                         all_sprites.add(bullet_laser)
                         bullets.add(bullet_laser)
                         balas_1 -= 1
                     else:
                         bullet = Bullet(player.rect.center)
+
+
                         all_sprites.add(bullet)
                         bullets.add(bullet)
+                        if player.lado == "esquerdo":
+                            bullet.speedx = -13
+                        elif player.lado == "direito":
+                            bullet.speedx = +13
                 if event.key == pygame.K_a:
                     player2.speedx = -8
                 if event.key == pygame.K_d:
@@ -408,10 +412,18 @@ try:
                         all_sprites.add(bullet_laser)
                         bullets.add(bullet_laser)
                         balas_2 -= 1
+                        if player2.lado == "esquerdo":
+                            bullet_laser.speedx = -13
+                        elif player2.lado == "direito":
+                            bullet_laser.speedx = +13
                     else:
                         bullet = Bullet(player2.rect.center)
                         all_sprites.add(bullet)
                         bullets.add(bullet)
+                        if player2.lado == "esquerdo":
+                            bullet.speedx = -13
+                        elif player2.lado == "direito":
+                            bullet.speedx = +13
                 
 
             if event.type == pygame.KEYUP:
