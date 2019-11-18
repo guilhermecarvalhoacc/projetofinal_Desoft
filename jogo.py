@@ -11,7 +11,7 @@ img_dir = path.join(path.dirname(__file__), 'img')
 
 WIDTH = 900 
 HEIGHT = 650 
-FPS = 60 
+FPS = 60
 
 
 WHITE = (255, 255, 255)
