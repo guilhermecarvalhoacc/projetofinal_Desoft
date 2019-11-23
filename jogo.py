@@ -2,26 +2,12 @@ import pygame
 from os import path
 import time
 import random
+from setup import *
 
 balas_1 = 10
 balas_2 = 10
 
-
 img_dir = path.join(path.dirname(__file__), 'img')
-
-
-WIDTH = 900 
-HEIGHT = 650 
-FPS = 60 
-
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-
 
 
 class Plataforma(pygame.sprite.Sprite):
@@ -45,20 +31,13 @@ class Plataforma(pygame.sprite.Sprite):
         self.rect.x = x
         self.rect.y = y
 
-
-
-
-
 class Player(pygame.sprite.Sprite):
     
 
-    def __init__(self):
-
-        
-        
-
+    def __init__(self, screen):
         pygame.sprite.Sprite.__init__(self)
-        
+
+        self.screen = screen 
 
         player_img = pygame.image.load(path.join(img_dir, "sniper.png")).convert()
         self.image = player_img
@@ -73,7 +52,7 @@ class Player(pygame.sprite.Sprite):
 
         self.rect = self.image.get_rect()
         
-
+        self.health = 100
         self.rect.centerx = WIDTH / 2 + 200
         self.rect.bottom = HEIGHT - 10
 
@@ -127,11 +106,17 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom < 53:
             self.rect.bottom = 53
 
+    def lifeBar(self):
+        pygame.draw.rect(self.screen, (255,0,0), (self.rect.x, self.rect.bottom - 90, 100,10))
+        if self.health >= 0:
+            pygame.draw.rect(self.screen, (0,255,0), (self.rect.x, self.rect.bottom - 90, 100 - (100 - self.health),10))        
+
+
 class Player_2(pygame.sprite.Sprite):
     
 
-    def __init__(self):
-
+    def __init__(self, screen):
+        self.screen = screen
         
         
 
@@ -158,6 +143,7 @@ class Player_2(pygame.sprite.Sprite):
         self.speedy = 0
         self.speedx = 0
         self.pulando = 0
+        self.health = 100
 
     def pula(self):
         self.pulando = 45
@@ -205,6 +191,10 @@ class Player_2(pygame.sprite.Sprite):
             self.rect.bottom = 640
         if self.rect.bottom < 53:
             self.rect.bottom = 53
+    def lifeBar(self):
+        pygame.draw.rect(self.screen, (255,0,0), (self.rect.x, self.rect.bottom - 90, 100,10))
+        if self.health >= 0:
+            pygame.draw.rect(self.screen, (0,255,0), (self.rect.x, self.rect.bottom - 90, 100 - (100 - self.health),10))              
 
 class Bullet(pygame.sprite.Sprite):
 
@@ -297,6 +287,8 @@ class Laser_gun(pygame.sprite.Sprite):
         elif self.rect.bottom < 640:
             self.rect.y += self.speedy
 
+
+#aqui o p1 controla a arma
         if player.lado == "esquerdo" or player2.lado == "esquerdo":
             laser_gun_img = pygame.image.load(path.join(img_dir, "Alien_Laser_Rifle1.png"))
             self.image = laser_gun_img
@@ -307,11 +299,7 @@ class Laser_gun(pygame.sprite.Sprite):
             self.image = laser_gun_img
             self.image = pygame.transform.scale(laser_gun_img,(50,50))
             self.image.set_colorkey(BLACK)
-
-
-    
-
-
+ 
 pygame.init()
 pygame.mixer.init()
 
@@ -327,13 +315,17 @@ background = pygame.image.load(path.join(img_dir, 'tela.png')).convert()
 background_rect = background.get_rect()
 
 
-player = Player()
-player2 = Player_2()
+player = Player(screen)
+player2 = Player_2(screen)
 plataforma = Plataforma(250,480,450,50)
 
 all_sprites = pygame.sprite.Group()
 plataformas = pygame.sprite.Group()
+
+#grupo das balas
 bullets = pygame.sprite.Group()
+bullets2 = pygame.sprite.Group()
+
 guns = pygame.sprite.Group()
 
 all_sprites.add(player)
@@ -361,7 +353,7 @@ try:
         for event in pygame.event.get():
 
 
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or player.health <= 0 or player2.health <=0:
                 running = False
 
             if event.type == pygame.KEYDOWN:
@@ -385,18 +377,17 @@ try:
                             bullet_laser.speedx = +13
 
                         all_sprites.add(bullet_laser)
-                        bullets.add(bullet_laser)
+                        bullets2.add(bullet_laser)
                         balas_1 -= 1
                     else:
                         bullet = Bullet(player.rect.center)
-
-
-                        all_sprites.add(bullet)
-                        bullets.add(bullet)
+                        all_sprites.add(bullets2)
+                        bullets2.add(bullet)
                         if player.lado == "esquerdo":
                             bullet.speedx = -13
                         elif player.lado == "direito":
                             bullet.speedx = +13
+
                 if event.key == pygame.K_a:
                     player2.speedx = -8
                 if event.key == pygame.K_d:
@@ -441,12 +432,33 @@ try:
                 if event.key == pygame.K_w:
                     pass
 
-
+        #player e plafatforma
         contato = pygame.sprite.spritecollide(player, plataformas, False)
+        #player2 e plataforma
         contato2 = pygame.sprite.spritecollide(player2, plataformas, False)
+        #player e arma
         pegou_arma = pygame.sprite.spritecollide(player,guns,False)
+        #player2 e arma
         pegou_arma2 = pygame.sprite.spritecollide(player2,guns,False)
+        #arma e plataforma 
         contato_arma = pygame.sprite.groupcollide(plataformas,guns,False,False)
+
+        #colisao bala1 e bala2
+        colisao_balas = pygame.sprite.groupcollide(bullets, bullets2, True, True)
+
+        #colisao p1 e bala2
+        bala2_p1 = pygame.sprite.spritecollide(player, bullets, False, pygame.sprite.collide_circle)
+        for hit in bala2_p1:
+            hit.kill() 
+            player.health -= 4         
+        #colisao p2 e bala1
+        bala1_p2 = pygame.sprite.spritecollide(player2, bullets2, False, pygame.sprite.collide_circle)
+        for hit in bala1_p2:
+            hit.kill()
+            player2.health -= 4
+
+
+
 
         for arma in pegou_arma:
             arma.set_player(player)
@@ -467,6 +479,9 @@ try:
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
         
+        player.lifeBar()
+        player2.lifeBar()
+   
 
         pygame.display.flip()
         
