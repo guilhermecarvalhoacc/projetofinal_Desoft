@@ -438,7 +438,7 @@ try:
 
         player.lifeBar()
         player2.lifeBar()
-
+        #construindo codigo para o final do jogo. Winner
         if player.health <= 0 and player2.health > 0:
             mapa = pygame.image.load(path.join(img_dir, 'Imagem2.png')).convert()
             mapa_rect = mapa.get_rect()
