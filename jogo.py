@@ -439,23 +439,26 @@ try:
         player.lifeBar()
         player2.lifeBar()
 
-        if player.health == 0 and player2.health > 0:
+        if player.health <= 0 and player2.health > 0:
             mapa = pygame.image.load(path.join(img_dir, 'Imagem2.png')).convert()
             mapa_rect = mapa.get_rect()
             mapa = pygame.transform.scale(mapa, (WIDTH, HEIGHT))
             screen.blit(mapa, mapa_rect)
+            pygame.display.flip()
             time.sleep(4)
-        elif player2.health == 0 and player.health > 0:
+        elif player2.health <= 0 and player.health > 0:
             mapa = pygame.image.load(path.join(img_dir, 'Imagem1.png')).convert()
             mapa_rect = mapa.get_rect()
             mapa = pygame.transform.scale(mapa, (WIDTH, HEIGHT))
             screen.blit(mapa, mapa_rect)
+            pygame.display.flip()
             time.sleep(4)
-        elif player2.health == 0 and player.health == 0:
+        elif player2.health <= 0 and player.health <= 0:
             mapa = pygame.image.load(path.join(img_dir, 'Imagem3.png')).convert()
             mapa_rect = mapa.get_rect()
             mapa = pygame.transform.scale(mapa, (WIDTH, HEIGHT))
             screen.blit(mapa, mapa_rect)
+            pygame.display.flip()
 
     
 
