@@ -2,26 +2,13 @@ import pygame
 from os import path
 import time
 import random
+from setup import *
 
-balas_1 = 10
-balas_2 = 10
-
+dano_p1 = 4
+dano_p2 = 4
 
 img_dir = path.join(path.dirname(__file__), 'img')
-
-
-WIDTH = 900 
-HEIGHT = 650 
-FPS = 60 
-
-
-WHITE = (255, 255, 255)
-BLACK = (0, 0, 0)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-
+snd_dir = path.join(path.dirname(__file__), "snd")
 
 
 class Plataforma(pygame.sprite.Sprite):
@@ -33,53 +20,43 @@ class Plataforma(pygame.sprite.Sprite):
         self.w = w
         self.h = h
 
-        plataforma_img = pygame.image.load(path.join(img_dir, "bloquinho_master.jpg")).convert()
+        plataforma_img = pygame.image.load(path.join(img_dir, "Imagem4.png")).convert()
         self.image = plataforma_img
 
         self.image = pygame.transform.scale(plataforma_img,(w,h))
 
-        self.image.set_colorkey(WHITE)
+        self.image.set_colorkey(BLACK)
 
         self.rect = self.image.get_rect()
 
         self.rect.x = x
         self.rect.y = y
 
-
-
-
-
 class Player(pygame.sprite.Sprite):
     
 
-    def __init__(self):
-
-        
-        
-
+    def __init__(self, screen):
+        self.screen = screen 
         pygame.sprite.Sprite.__init__(self)
-        
-
-        player_img = pygame.image.load(path.join(img_dir, "sniper.png")).convert()
+        player_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471.png")).convert()
         self.image = player_img
 
-        self.image = pygame.transform.scale(player_img, (70, 70))
-        
+        self.image = pygame.transform.scale(player_img, (80, 90))
+        self.image.set_colorkey(BLACK)
 
-        self.image.set_colorkey(WHITE)
-
-        self.lado = "esquerdo"
+        self.lado = "direito"
         
 
         self.rect = self.image.get_rect()
         
 
-        self.rect.centerx = WIDTH / 2 + 200
+        self.rect.centerx = WIDTH / 2 - 200
         self.rect.bottom = HEIGHT - 10
 
         self.speedy = 0
         self.speedx = 0
         self.pulando = 0
+        self.health = 200
 
     def pula(self):
         self.pulando = 45
@@ -105,16 +82,16 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.speedy
 
         if self.speedx < 0:
-            player_img = pygame.image.load(path.join(img_dir, "sniper.png")).convert()
+            player_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471_1.png")).convert()
             self.image = player_img
-            self.image = pygame.transform.scale(player_img, (70, 70))
-            self.image.set_colorkey(WHITE)
+            self.image = pygame.transform.scale(player_img, (80, 90))
+            self.image.set_colorkey(BLACK)
             self.lado = "esquerdo"
         elif self.speedx > 0:
-            player_img = pygame.image.load(path.join(img_dir, "sniper2.png")).convert()
+            player_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471.png")).convert()
             self.image = player_img
-            self.image = pygame.transform.scale(player_img, (70, 70))
-            self.image.set_colorkey(WHITE)
+            self.image = pygame.transform.scale(player_img, (80, 90))
+            self.image.set_colorkey(BLACK)
             self.lado = "direito"
         
 
@@ -127,24 +104,24 @@ class Player(pygame.sprite.Sprite):
         if self.rect.bottom < 53:
             self.rect.bottom = 53
 
+    def lifeBar(self):
+        pygame.draw.rect(self.screen, (0,0,0), (45, 45, 210, 30))
+        pygame.draw.rect(self.screen, (255,0,0), (50, 50, 200, 20))
+        if self.health >= 0:
+            pygame.draw.rect(self.screen, (0,255,0), (50, 50,self.health,20))        
+
+
 class Player_2(pygame.sprite.Sprite):
     
 
-    def __init__(self):
-
-        
-        
-
+    def __init__(self, screen):
+        self.screen = screen
         pygame.sprite.Sprite.__init__(self)
-        
-
-        player2_img = pygame.image.load(path.join(img_dir, "um-quadrado-azul-grande-300x263.png")).convert()
+        player2_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471_B_1.png")).convert()
         self.image = player2_img
 
-        self.image = pygame.transform.scale(player2_img, (70, 70))
-        
-
-        self.image.set_colorkey(WHITE)
+        self.image = pygame.transform.scale(player2_img, (80, 90))
+        self.image.set_colorkey(BLACK)
 
         self.lado = "esquerdo"
         
@@ -152,20 +129,19 @@ class Player_2(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         
 
-        self.rect.centerx = WIDTH / 2 - 200
+        self.rect.centerx = WIDTH / 2 + 200
         self.rect.bottom = HEIGHT - 10
 
         self.speedy = 0
         self.speedx = 0
         self.pulando = 0
+        self.health = 200
 
     def pula(self):
         self.pulando = 45
 
     def update(self):
 
-        #if self.pulando == 0:
-        #    self.speedy = 9
         if self.pulando > 22:
             self.speedy = -9
             self.pulando -= 1
@@ -175,8 +151,7 @@ class Player_2(pygame.sprite.Sprite):
             elif self.rect.bottom > (plataforma.rect.y +10) and self.rect.centerx < plataforma.rect.x + plataforma.w and self.rect.centerx > plataforma.rect.x + (plataforma.w - 10):
                 self.rect.centerx = plataforma.rect.x + plataforma.w
             elif self.rect.bottom > (plataforma.rect.y +10) and self.rect.centerx > (plataforma.rect.x - 40) and self.rect.centerx < plataforma.rect.x +10:
-                self.rect.centerx = plataforma.rect.x - 40
-            #self.speedy = 0     
+                self.rect.centerx = plataforma.rect.x - 40     
         else:
             self.speedy = 9
             if self.pulando > 0:
@@ -186,17 +161,18 @@ class Player_2(pygame.sprite.Sprite):
         self.rect.y += self.speedy
 
         if self.speedx < 0:
-            player2_img = pygame.image.load(path.join(img_dir, "um-quadrado-azul-grande-300x263.png")).convert()
+            player2_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471_B_1.png")).convert()
             self.image = player2_img
-            self.image = pygame.transform.scale(player2_img, (70, 70))
+            self.image = pygame.transform.scale(player2_img, (80, 90))
+            self.image.set_colorkey(BLACK)
             self.lado = "esquerdo"
         elif self.speedx > 0:
-            player2_img = pygame.image.load(path.join(img_dir, "um-quadrado-azul-grande-300x263.png")).convert()
+            player2_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471_B.png")).convert()
             self.image = player2_img
-            self.image = pygame.transform.scale(player2_img, (70, 70))
+            self.image = pygame.transform.scale(player2_img, (80, 90))
+            self.image.set_colorkey(BLACK)
             self.lado = "direito"
         
-
         if self.rect.right > WIDTH + 40 and self.speedx ==  8:
             self.rect.x = 0
         if self.rect.left < -40 and self.speedx == -8:
@@ -205,68 +181,57 @@ class Player_2(pygame.sprite.Sprite):
             self.rect.bottom = 640
         if self.rect.bottom < 53:
             self.rect.bottom = 53
+    def lifeBar(self):
+        pygame.draw.rect(self.screen, (0,0,0), (645, 45, 210, 30))
+        pygame.draw.rect(self.screen, (255,0,0), (650, 50, 200, 20))
+        if self.health >= 0:
+            pygame.draw.rect(self.screen, (0,255,0), (650,50,self.health,20))              
 
 class Bullet(pygame.sprite.Sprite):
 
-    def __init__(self,center):
+    def __init__(self,center, bottom, id):
         pygame.sprite.Sprite.__init__(self)
 
-        bullet_image = pygame.image.load(path.join(img_dir,"ammunition-305176_960_720.png")).convert()
+        bullet_image = pygame.image.load(path.join(img_dir,"pngocean.com.png")).convert()
         self.image = bullet_image
+        self.id = id
 
-        self.image = pygame.transform.scale(bullet_image,(30,10))
+        self.image = pygame.transform.scale(bullet_image,(15,15))
 
-        self.image.set_colorkey(BLACK)
-
-        self.rect = self.image.get_rect()
-
-        self.rect.center = center
-
-        self.speedx = -13
-
-
-    def update(self):
-        self.rect.x += self.speedx
-        if self.rect.x > WIDTH or self.rect.x < 0:
-            self.kill()
-            
-class Bullet_laser(pygame.sprite.Sprite):
-
-    def __init__(self,center):
-        pygame.sprite.Sprite.__init__(self)
-
-        bullet_laser_image = pygame.image.load(path.join(img_dir,"34623233ddb35cc.png")).convert()
-        self.image = bullet_laser_image
-
-        self.image = pygame.transform.scale(bullet_laser_image,(30,10))
-
-        self.image.set_colorkey(BLACK)
+        self.image.set_colorkey(WHITE)
 
         self.rect = self.image.get_rect()
 
+        #center x, bottom y
         self.rect.center = center
+        self.rect.bottom = bottom - 30
 
-        self.speedx = -13
+        if id == 1:
+            if player.lado == "esquerdo":
+                self.speedx = -13
+            elif player.lado == "direito":
+                self.speedx = 13
 
+        if id == 2:
+            if player2.lado == "esquerdo":
+                self.speedx = -13
+            elif player2.lado == "direito":
+                self.speedx = 13
 
     def update(self):
         self.rect.x += self.speedx
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.kill()
 
-
-class Laser_gun(pygame.sprite.Sprite):
-
+class Power_up(pygame.sprite.Sprite):
     def __init__(self):
+
         pygame.sprite.Sprite.__init__(self)
 
-        self.player = None
-        self.player2 = None
+        power_up_img = pygame.image.load(path.join(img_dir, "box-zebrawood.png")).convert()
+        self.image = power_up_img
 
-        laser_gun_img = pygame.image.load(path.join(img_dir, "Alien_Laser_Rifle1.png"))
-        self.image = laser_gun_img
-
-        self.image = pygame.transform.scale(laser_gun_img,(50,50))
+        self.image = pygame.transform.scale(power_up_img,(50,50))
 
         self.image.set_colorkey(BLACK)
 
@@ -279,39 +244,17 @@ class Laser_gun(pygame.sprite.Sprite):
         self.speedy = 5
 
         self.game_clock = 1
-    
-    def set_player(self,player):
-        self.player = player
-    
-    def set_player2(self,player2):
-        self.player2 = player2
 
     def update(self):
-        if self.player is not None:
-            self.rect.center = player.rect.center
-        if self.player2 is not None:
-            self.rect.center = player2.rect.center
-        elif contato_arma and self.rect.bottom < (plataforma.rect.y + 10):
+
+        if contato_box and self.rect.bottom < (plataforma.rect.y + 10):
             if self.rect.bottom > plataforma.rect.y:
                 self.rect.bottom = plataforma.rect.y + 5
+
         elif self.rect.bottom < 640:
             self.rect.y += self.speedy
 
-        if player.lado == "esquerdo" or player2.lado == "esquerdo":
-            laser_gun_img = pygame.image.load(path.join(img_dir, "Alien_Laser_Rifle1.png"))
-            self.image = laser_gun_img
-            self.image = pygame.transform.scale(laser_gun_img,(50,50))
-            self.image.set_colorkey(BLACK)
-        elif player.lado == "direito" or player2.lado == "direito":
-            laser_gun_img = pygame.image.load(path.join(img_dir, "Alien_Laser_Rifle.png"))
-            self.image = laser_gun_img
-            self.image = pygame.transform.scale(laser_gun_img,(50,50))
-            self.image.set_colorkey(BLACK)
-
-
-    
-
-
+ 
 pygame.init()
 pygame.mixer.init()
 
@@ -326,149 +269,195 @@ clock = pygame.time.Clock()
 background = pygame.image.load(path.join(img_dir, 'tela.png')).convert()
 background_rect = background.get_rect()
 
+bg_inicial = pygame.image.load(path.join(img_dir, 'imagem5.png')).convert()
+bg_inicial_rect = bg_inicial.get_rect()
+bg_inicial = pygame.transform.scale(bg_inicial, (900, 650))
 
-player = Player()
-player2 = Player_2()
-plataforma = Plataforma(250,480,450,50)
+shot_sound = pygame.mixer.Sound(path.join(snd_dir,"Gun+Silencer.wav"))
+player_hurt = pygame.mixer.Sound(path.join(snd_dir,"Jab-SoundBible.com-1806727891.wav"))
+
+font = pygame.font.Font('freesansbold.ttf', 30)
+text = font.render('Player 1', True, BLACK)
+textRect = text.get_rect()
+textRect.center = (105,30)
+
+text2 = font.render('Player 2', True, BLACK)
+textRect2 = text.get_rect()
+textRect2.center = (705,30)
+
+player = Player(screen)
+player2 = Player_2(screen)
+plataforma = Plataforma(210,450,450,50)
+ground = Plataforma(-50,640,1000,50)
 
 all_sprites = pygame.sprite.Group()
 plataformas = pygame.sprite.Group()
+
+#grupo das balas
 bullets = pygame.sprite.Group()
-guns = pygame.sprite.Group()
+bullets2 = pygame.sprite.Group()
+
+boxes = pygame.sprite.Group()
 
 all_sprites.add(player)
 all_sprites.add(player2)
 all_sprites.add(plataforma)
+all_sprites.add(ground)
 plataformas.add(plataforma)
 
 
-try:
-    
+tela_inicial = True
 
+try: 
     running = True
     while running:
-        x = random.randint(1,200)
-        if x == 3:
-            y = random.randint(1,5)
-            if y == 3:
-                gun_laser = Laser_gun()
-                all_sprites.add(gun_laser)
-                guns.add(gun_laser)
-        
+        while tela_inicial:
+            screen.fill(BLACK)
+            screen.blit(bg_inicial, bg_inicial_rect)
+            all_sprites.draw(screen)
+            pygame.display.flip()
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                   tela_inicial = False
+                   running = False
+                if event.type == pygame.KEYUP:
+                    tela_inicial = False
+
+        if len(boxes) >= 2:
+
+            x = random.randint(1,200)
+            if x == 3:
+                y = random.randint(1,5)
+                if y == 3:
+                    box = Power_up()
+                    all_sprites.add(box)
+                    boxes.add(box)
 
         clock.tick(FPS)
         
         for event in pygame.event.get():
 
 
-            if event.type == pygame.QUIT:
+            if event.type == pygame.QUIT or player.health <= 0 or player2.health <=0:
                 running = False
 
             if event.type == pygame.KEYDOWN:
 
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_a:
                     player.speedx = -8
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_d:
                     player.speedx = 8
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_w:
                     if player.pulando == 0:
                         player.pula()
                     elif contato and player.rect.bottom >= plataforma.rect.y and player.rect.centerx < plataforma.rect.x + plataforma.w and player.rect.centerx > (plataforma.rect.x - 40):
                         player.pula()
-                if event.key == pygame.K_l:
-                    if pegou_arma:
-                        bullet_laser = Bullet_laser(player.rect.center)
-
-                        if player.lado == "esquerdo":
-                            bullet_laser.speedx = -13
-                        elif player.lado == "direito":
-                            bullet_laser.speedx = +13
-
-                        all_sprites.add(bullet_laser)
-                        bullets.add(bullet_laser)
-                        balas_1 -= 1
-                    else:
-                        bullet = Bullet(player.rect.center)
+                if event.key == pygame.K_SPACE:
+                    bullet = Bullet(player.rect.center, player.rect.bottom, 1)
+                    all_sprites.add(bullet)
+                    bullets2.add(bullet)
+                    shot_sound.play()
 
 
-                        all_sprites.add(bullet)
-                        bullets.add(bullet)
-                        if player.lado == "esquerdo":
-                            bullet.speedx = -13
-                        elif player.lado == "direito":
-                            bullet.speedx = +13
-                if event.key == pygame.K_a:
+                if event.key == pygame.K_LEFT:
                     player2.speedx = -8
-                if event.key == pygame.K_d:
+                if event.key == pygame.K_RIGHT:
                     player2.speedx = +8
-                if event.key == pygame.K_w:
+                if event.key == pygame.K_UP:
                     if player2.pulando == 0:
                         player2.pula()
                     elif contato2 and player2.rect.bottom >= plataforma.rect.y and player2.rect.centerx < plataforma.rect.x + plataforma.w and player2.rect.centerx > (plataforma.rect.x - 40):
                         player2.pula()
-                if event.key == pygame.K_SPACE:
-                    if pegou_arma2:
-                        bullet_laser = Bullet_laser(player2.rect.center)
-                        all_sprites.add(bullet_laser)
-                        bullets.add(bullet_laser)
-                        balas_2 -= 1
-                        if player2.lado == "esquerdo":
-                            bullet_laser.speedx = -13
-                        elif player2.lado == "direito":
-                            bullet_laser.speedx = +13
-                    else:
-                        bullet = Bullet(player2.rect.center)
-                        all_sprites.add(bullet)
-                        bullets.add(bullet)
-                        if player2.lado == "esquerdo":
-                            bullet.speedx = -13
-                        elif player2.lado == "direito":
-                            bullet.speedx = +13
+                if event.key == pygame.K_l:
+                    bullet = Bullet(player2.rect.center, player2.rect.bottom, 2)
+                    all_sprites.add(bullet)
+                    bullets.add(bullet)
+                    shot_sound.play()
+
                 
 
             if event.type == pygame.KEYUP:
 
-                if event.key == pygame.K_LEFT:
-                    player.speedx = 0
-                if event.key == pygame.K_RIGHT:
-                    player.speedx = 0
-                if event.key == pygame.K_UP:
-                    pass
                 if event.key == pygame.K_a:
-                    player2.speedx = 0
+                    player.speedx = 0
                 if event.key == pygame.K_d:
-                    player2.speedx = 0
+                    player.speedx = 0
                 if event.key == pygame.K_w:
                     pass
+                if event.key == pygame.K_LEFT:
+                    player2.speedx = 0
+                if event.key == pygame.K_RIGHT:
+                    player2.speedx = 0
+                if event.key == pygame.K_UP:
+                    pass
 
-
+        #player e plafatforma
         contato = pygame.sprite.spritecollide(player, plataformas, False)
+        #player2 e plataforma
         contato2 = pygame.sprite.spritecollide(player2, plataformas, False)
-        pegou_arma = pygame.sprite.spritecollide(player,guns,False)
-        pegou_arma2 = pygame.sprite.spritecollide(player2,guns,False)
-        contato_arma = pygame.sprite.groupcollide(plataformas,guns,False,False)
 
-        for arma in pegou_arma:
-            arma.set_player(player)
-            if balas_1 == 0:
-                arma.kill()
-                balas_1 = 10
+        #player e box
+        pegou_power_up_p1 = pygame.sprite.groupcollide(bullets2,boxes,True,True)
+        for box in pegou_power_up_p1: 
+            dano_p1 += 0.5
 
-        for arma in pegou_arma2:
-            arma.set_player2(player2)
-            if balas_2 == 0:
-                arma.kill()
-                balas_2 = 10
+        #player e box
+        pegou_power_up_p2 = pygame.sprite.groupcollide(bullets,boxes,True,True)
+        for box in pegou_power_up_p2: 
+            dano_p2 += 0.5
 
+        #colisao bala1 e bala2
+        colisao_balas = pygame.sprite.groupcollide(bullets, bullets2, True, True)
+
+        #colisao p1 e bala2
+        bala2_p1 = pygame.sprite.spritecollide(player, bullets, False, pygame.sprite.collide_circle)
+        for hit in bala2_p1:
+            hit.kill() 
+            player.health -= dano_p2
+            player_hurt.play()    
+        #colisao p2 e bala1
+        bala1_p2 = pygame.sprite.spritecollide(player2, bullets2, False, pygame.sprite.collide_circle)
+        for hit in bala1_p2:
+            hit.kill()
+            player2.health -= dano_p1
+            player_hurt.play()
+        #arma e plataforma 
+        contato_box = pygame.sprite.groupcollide(plataformas,boxes,False,False)
                 
         all_sprites.update()
-
+        
         screen.fill(BLACK)
         screen.blit(background, background_rect)
         all_sprites.draw(screen)
-        
+        screen.blit(text, textRect)
+        screen.blit(text2, textRect2)
+
+        player.lifeBar()
+        player2.lifeBar()
+
+        if player.health == 0 and player2.health > 0:
+            mapa = pygame.image.load(path.join(img_dir, 'Imagem2.png')).convert()
+            mapa_rect = mapa.get_rect()
+            mapa = pygame.transform.scale(mapa, (WIDTH, HEIGHT))
+            screen.blit(mapa, mapa_rect)
+            time.sleep(4)
+        elif player2.health == 0 and player.health > 0:
+            mapa = pygame.image.load(path.join(img_dir, 'Imagem1.png')).convert()
+            mapa_rect = mapa.get_rect()
+            mapa = pygame.transform.scale(mapa, (WIDTH, HEIGHT))
+            screen.blit(mapa, mapa_rect)
+            time.sleep(4)
+        elif player2.health == 0 and player.health == 0:
+            mapa = pygame.image.load(path.join(img_dir, 'Imagem3.png')).convert()
+            mapa_rect = mapa.get_rect()
+            mapa = pygame.transform.scale(mapa, (WIDTH, HEIGHT))
+            screen.blit(mapa, mapa_rect)
+
+    
 
         pygame.display.flip()
         
 finally:
     pygame.quit()
+
+
