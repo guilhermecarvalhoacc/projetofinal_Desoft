@@ -10,7 +10,7 @@ dano_p2 = 4
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), "snd")
 
-
+#criando a plataforma
 class Plataforma(pygame.sprite.Sprite):
 
     def __init__(self,x,y,w,h):
@@ -31,11 +31,12 @@ class Plataforma(pygame.sprite.Sprite):
 
         self.rect.x = x
         self.rect.y = y
-
+#criando jogador 1 
 class Player(pygame.sprite.Sprite):
     
 
     def __init__(self, screen):
+        #criando a tela do jogo 
         self.screen = screen 
         pygame.sprite.Sprite.__init__(self)
         player_img = pygame.image.load(path.join(img_dir, "kissclipart-cartoon-guy-with-gun-png-clipart-soldier-army-men-2bf3a53fc8702471.png")).convert()
@@ -110,7 +111,7 @@ class Player(pygame.sprite.Sprite):
         if self.health >= 0:
             pygame.draw.rect(self.screen, (0,255,0), (50, 50,self.health,20))        
 
-
+#criando jogador 2 
 class Player_2(pygame.sprite.Sprite):
     
 
@@ -186,7 +187,7 @@ class Player_2(pygame.sprite.Sprite):
         pygame.draw.rect(self.screen, (255,0,0), (650, 50, 200, 20))
         if self.health >= 0:
             pygame.draw.rect(self.screen, (0,255,0), (650,50,self.health,20))              
-
+#criando a classe bala
 class Bullet(pygame.sprite.Sprite):
 
     def __init__(self,center, bottom, id):
@@ -222,7 +223,7 @@ class Bullet(pygame.sprite.Sprite):
         self.rect.x += self.speedx
         if self.rect.x > WIDTH or self.rect.x < 0:
             self.kill()
-
+#criando a classe da caixa para aumentar o poder de dano do tiro 
 class Power_up(pygame.sprite.Sprite):
     def __init__(self):
 
@@ -308,7 +309,7 @@ plataformas.add(plataforma)
 
 
 tela_inicial = True
-
+#loop principal 
 try: 
     running = True
     while running:
