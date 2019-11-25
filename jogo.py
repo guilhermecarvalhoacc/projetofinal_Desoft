@@ -275,6 +275,7 @@ bg_inicial = pygame.transform.scale(bg_inicial, (900, 650))
 
 shot_sound = pygame.mixer.Sound(path.join(snd_dir,"Gun+Silencer.wav"))
 player_hurt = pygame.mixer.Sound(path.join(snd_dir,"Jab-SoundBible.com-1806727891.wav"))
+box_destroyer = pygame.mixer.Sound(path.join(snd_dir,"Dropped Wooden Floor-SoundBible.com-382418821.wav"))
 
 font = pygame.font.Font('freesansbold.ttf', 30)
 text = font.render('Player 1', True, BLACK)
@@ -323,7 +324,7 @@ try:
                 if event.type == pygame.KEYUP:
                     tela_inicial = False
 
-        if len(boxes) >= 2:
+        if len(boxes) <= 2:
 
             x = random.randint(1,200)
             if x == 3:
@@ -396,15 +397,17 @@ try:
         #player2 e plataforma
         contato2 = pygame.sprite.spritecollide(player2, plataformas, False)
 
-        #player e box
+        #player1 e box
         pegou_power_up_p1 = pygame.sprite.groupcollide(bullets2,boxes,True,True)
         for box in pegou_power_up_p1: 
             dano_p1 += 0.5
+            box_destroyer.play()
 
-        #player e box
+        #player2 e box
         pegou_power_up_p2 = pygame.sprite.groupcollide(bullets,boxes,True,True)
         for box in pegou_power_up_p2: 
             dano_p2 += 0.5
+            box_destroyer.play()
 
         #colisao bala1 e bala2
         colisao_balas = pygame.sprite.groupcollide(bullets, bullets2, True, True)
@@ -421,7 +424,7 @@ try:
             hit.kill()
             player2.health -= dano_p1
             player_hurt.play()
-        #arma e plataforma 
+        #caixa e plataforma 
         contato_box = pygame.sprite.groupcollide(plataformas,boxes,False,False)
                 
         all_sprites.update()
