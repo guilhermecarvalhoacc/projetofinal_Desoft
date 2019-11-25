@@ -5,7 +5,7 @@ import random
 from setup import *
 
 dano_p1 = 4
-dano_p2 = 4
+dano_p2 = 4 
 
 img_dir = path.join(path.dirname(__file__), 'img')
 snd_dir = path.join(path.dirname(__file__), "snd")
